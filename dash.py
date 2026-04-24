@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from streamlit_plotly_events import plotly_events
-
+st.write("VERSION 3 FIXED")
 st.set_page_config(layout="wide", page_title="Cyber Dashboard")
 
 def load():
