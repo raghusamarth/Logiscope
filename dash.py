@@ -5,7 +5,6 @@ from streamlit_plotly_events import plotly_events
 
 st.set_page_config(layout="wide", page_title="Cyber Dashboard")
 
-@st.cache_data
 def load():
     fw = pd.read_csv("data/firewall_logs.csv")
     lb = pd.read_csv("data/lb_logs.csv")
