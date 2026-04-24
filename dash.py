@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from streamlit_plotly_events import plotly_events
-st.write("VERSION 3 FIXED")
+
 st.set_page_config(layout="wide", page_title="Cyber Dashboard")
 
 def load():
@@ -18,7 +18,6 @@ def load():
 
 firewall, lb, web = load()
 
-firewall = firewall.sample(min(3000, len(firewall)))
 lb = lb.sample(min(3000, len(lb)))
 web = web.sample(min(3000, len(web)))
 
@@ -72,30 +71,31 @@ elif page == "Firewall":
     action_counts.columns = ['Action', 'Count']
 
     fig_pie = px.pie(
-        action_counts,
-        names='Action',
-        values='Count',
-        color='Action',
-        color_discrete_map={
-            "Blocked": "#ef4444",
-            "Allowed": "#22c55e"
-        }
+    action_counts,
+    names='Action',
+    values='Count',
+    color='Action',
+    color_discrete_map={
+        "Blocked": "#ef4444",
+        "Allowed": "#22c55e"
+    }
     )
 
+    fig_pie.update_traces(textinfo='percent+label')
     fig_pie.update_layout(title="Allowed vs Blocked Traffic")
-
     selected = plotly_events(fig_pie, click_event=True)
 
     if selected:
-        chosen_action = selected[0]['label']
+        idx = selected[0]['pointNumber']
+        chosen_action = action_counts.iloc[idx]['Action']
+
         filtered = firewall[firewall['Action Taken'] == chosen_action]
 
-        st.subheader(f"{chosen_action} IPs (with Ports)")
+        st.subheader(f"{chosen_action} IPs (Top 20)")
         st.dataframe(
-            filtered[['Source IP Address', 'Port']].head(20),
-            use_container_width=True
-        )
-
+        filtered[['Source IP Address', 'Port']].head(20),
+        use_container_width=True
+    )
     st.divider()
 
     col1, col2 = st.columns(2)
